@@ -1,0 +1,40 @@
+---
+const { title, body, href } = Astro.props;
+---
+
+<div class="card">
+  <h3>{title}</h3>
+  <p>{body}</p>
+  {href ? <p class="read-more"><a href={href}>Warhammer</a></p> : null}
+</div>
+
+<style>
+  .card {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: #333;
+  }
+
+  p {
+    margin-bottom: 12px;
+    color: #555;
+    line-height: 1.5;
+  }
+
+  .read-more a {
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  .read-more a:hover {
+    text-decoration: underline;
+  }
+</style>

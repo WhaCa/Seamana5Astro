@@ -1,0 +1,108 @@
+---
+
+
+interface Props {
+  initialLikes?: number;
+  postId: string; 
+}
+
+const { initialLikes = 0, postId } = Astro.props;
+let likes = initialLikes;
+let hasLiked = false;
+
+function setLikes(newLikes: number) {
+  likes = newLikes;
+  const countElement = document.querySelector('.count');
+  if (countElement) {
+    countElement.textContent = likes.toString();
+  }
+}
+
+function setHasLiked(newHasLiked: boolean) {
+  hasLiked = newHasLiked;
+  const button = document.querySelector('.like-button');
+  if (button) {
+    if (hasLiked) {
+      button.classList.add('liked');
+    } else {
+      button.classList.remove('liked');
+    }
+  }
+}
+
+async function handleLike() {
+  setHasLiked(!hasLiked);
+  const newLikes = hasLiked ? likes - 1 : likes + 1;
+  setLikes(newLikes);
+  console.log(`Post ID: ${postId} - Likes updated to: ${newLikes}`);
+}
+
+if (typeof window !== 'undefined') {
+  const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '{}');
+  if (likedPosts[postId]) {
+    setHasLiked(true);
+  }
+}
+
+if (typeof window !== 'undefined') {
+  addEventListener('beforeunload', () => {
+    const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '{}');
+    if (hasLiked) {
+      likedPosts[postId] = true;
+    } else {
+      delete likedPosts[postId];
+    }
+    localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
+  });
+}
+---
+
+<button></button>
+  aria-label={`${likes} likes, click to like`}
+  onclick={handleLike}
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill={hasLiked ? 'currentColor' : 'none'}
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class="icon"
+  >
+    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+  </svg>
+  <span class="count">{likes}</span>
+</button>
+
+<style>
+  .like-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .like-button:hover {
+    background-color: #f0f0f0;
+  }
+
+  .like-button.liked {
+    border-color: #e24e42;
+    color: #e24e42;
+  }
+
+  .icon {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  .count {
+    font-weight: bold;
+  }
+</style>
